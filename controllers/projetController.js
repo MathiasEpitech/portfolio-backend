@@ -8,7 +8,7 @@ exports.addProjet = async (req, res) => {
         return res.status(400).json({ message: "Aucune image téléchargée." });
     }
 
-    const images = req.files.map(file => `${file.path}`);
+    const images = req.files.map(file => `https://app-morning-leaf-2821.fly.dev/${file.path}`);
 
     try {
 
@@ -41,7 +41,7 @@ exports.getProjets = async (req, res) => {
 exports.updateProjet = async (req, res) => {
     const { id } = req.params;
     const { title, description, category, link } = req.body;
-    const images = req.files ? req.files.map(file => `/${file.path}`) : [];
+    const images = req.files ? req.files.map(file => `https://app-morning-leaf-2821.fly.dev/${file.path}`) : [];
 
     try {
         
