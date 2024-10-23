@@ -26,5 +26,5 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projets', projetRoutes);
 app.use('/api/categories', categoryRoutes);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
