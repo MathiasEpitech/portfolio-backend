@@ -5,6 +5,19 @@ const generateToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
+// Inscription (à exécuter une seule fois pour créer ton compte admin)
+exports.register = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = new User({ username, password });
+    await user.save();
+    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Connexion
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -19,6 +32,7 @@ exports.login = async (req, res) => {
   }
 };
 
+// Déconnexion (côté serveur, elle ne fait qu'envoyer une réponse de confirmation)
 exports.logout = (req, res) => {
   res.json({ message: 'Déconnexion réussie' });
 };

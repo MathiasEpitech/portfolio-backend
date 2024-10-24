@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 
+// Ajouter une catégorie
 exports.addCategory = async (req, res) => {
   const { name } = req.body;
 
@@ -12,6 +13,7 @@ exports.addCategory = async (req, res) => {
   }
 };
 
+// Obtenir toutes les catégories
 exports.getCategories = async (req, res) => {
   try {
     const categories = await Category.find();
@@ -21,6 +23,7 @@ exports.getCategories = async (req, res) => {
   }
 };
 
+// Supprimer une catégorie
 exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
 

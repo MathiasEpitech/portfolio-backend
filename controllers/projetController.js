@@ -1,6 +1,8 @@
 const Category = require('../models/Category');
 const Projet = require('../models/Projet');
+const { uploadToS3 } = require('../function/uploadImageFunction');
 
+// Ajouter un projet avec upload d'images sur S3
 exports.addProjet = async (req, res) => {
     const { title, description, category, link } = req.body;
 
@@ -8,10 +10,7 @@ exports.addProjet = async (req, res) => {
         return res.status(400).json({ message: "Aucune image téléchargée." });
     }
 
-    const images = req.files.map(file => `https://app-morning-leaf-2821.fly.dev/${file.path}`);
-
     try {
-
         if (!category || category.length === 0) {
             return res.status(400).json({ message: 'Une catégorie est requise.' });
         }
@@ -21,14 +20,28 @@ exports.addProjet = async (req, res) => {
             return res.status(404).json({ message: 'Une ou plusieurs catégories non trouvées' });
         }
 
-        const projet = new Projet({ title, description, images, category, link  });
+        // Uploader les fichiers sur S3 et stocker les URLs
+        const images = [];
+        for (const file of req.files) {
+            const s3Url = await uploadToS3(file);
+            images.push(s3Url);
+        }
+
+        // Créer et enregistrer le projet
+        const projet = new Projet({ title, description, images, category, link });
         await projet.save();
+
         res.status(201).json(projet);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error("Erreur lors de la création du projet:", error);
+        res.status(500).json({ message: error.message });
     }
 };
 
+// Autres fonctions comme `getProjets`, `updateProjet`, et `deleteProjet` restent inchangées
+
+
+// Obtenir tous les projets
 exports.getProjets = async (req, res) => {
     try {
         const projets = await Projet.find();
@@ -38,24 +51,31 @@ exports.getProjets = async (req, res) => {
     }
 };
 
+// Modifier un projet avec upload des nouvelles images sur S3
 exports.updateProjet = async (req, res) => {
     const { id } = req.params;
     const { title, description, category, link } = req.body;
-    const images = req.files ? req.files.map(file => `https://app-morning-leaf-2821.fly.dev/${file.path}`) : [];
-
+    
     try {
-        
+        // Vérification des catégories
         if (!category || category.length === 0) {
             return res.status(400).json({ message: 'Une catégorie est requise.' });
         }
-        
+
         const existingCategories = await Category.find({ _id: { $in: category } });
         if (existingCategories.length === 0) {
             return res.status(404).json({ message: 'Une ou plusieurs catégories non trouvées' });
         }
 
         const updateData = { title, description, category, link };
-        if (images) {
+
+        // Uploader les nouvelles images si présentes
+        if (req.files && req.files.length > 0) {
+            const images = [];
+            for (const file of req.files) {
+                const s3Url = await uploadToS3(file);
+                images.push(s3Url);
+            }
             updateData.images = images;
         }
 
@@ -65,10 +85,11 @@ exports.updateProjet = async (req, res) => {
         }
         res.json(projet);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
+// Supprimer un projet
 exports.deleteProjet = async (req, res) => {
     const { id } = req.params;
 
