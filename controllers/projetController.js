@@ -2,7 +2,6 @@ const Category = require('../models/Category');
 const Projet = require('../models/Projet');
 const { uploadToS3 } = require('../function/uploadImageFunction');
 
-// Ajouter un projet avec upload d'images sur S3
 exports.addProjet = async (req, res) => {
     const { title, description, category, link } = req.body;
 
@@ -20,14 +19,12 @@ exports.addProjet = async (req, res) => {
             return res.status(404).json({ message: 'Une ou plusieurs catégories non trouvées' });
         }
 
-        // Uploader les fichiers sur S3 et stocker les URLs
         const images = [];
         for (const file of req.files) {
             const s3Url = await uploadToS3(file);
             images.push(s3Url);
         }
 
-        // Créer et enregistrer le projet
         const projet = new Projet({ title, description, images, category, link });
         await projet.save();
 
@@ -38,10 +35,6 @@ exports.addProjet = async (req, res) => {
     }
 };
 
-// Autres fonctions comme `getProjets`, `updateProjet`, et `deleteProjet` restent inchangées
-
-
-// Obtenir tous les projets
 exports.getProjets = async (req, res) => {
     try {
         const projets = await Projet.find();
@@ -51,13 +44,12 @@ exports.getProjets = async (req, res) => {
     }
 };
 
-// Modifier un projet avec upload des nouvelles images sur S3
 exports.updateProjet = async (req, res) => {
     const { id } = req.params;
     const { title, description, category, link } = req.body;
     
     try {
-        // Vérification des catégories
+
         if (!category || category.length === 0) {
             return res.status(400).json({ message: 'Une catégorie est requise.' });
         }
@@ -69,7 +61,6 @@ exports.updateProjet = async (req, res) => {
 
         const updateData = { title, description, category, link };
 
-        // Uploader les nouvelles images si présentes
         if (req.files && req.files.length > 0) {
             const images = [];
             for (const file of req.files) {
@@ -89,7 +80,6 @@ exports.updateProjet = async (req, res) => {
     }
 };
 
-// Supprimer un projet
 exports.deleteProjet = async (req, res) => {
     const { id } = req.params;
 

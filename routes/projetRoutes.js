@@ -12,12 +12,10 @@ const router = express.Router();
 
 router.get('/', getProjets);
 
-router.post('/', authMiddleware, upload.array('images', 5), addProjet); // Jusqu'à 5 images
+router.post('/', authMiddleware, upload.array('images', 7), addProjet);
 
-// Modifier un projet
-router.put('/:id', authMiddleware, upload.array('images', 5), updateProjet);
+router.put('/:id', authMiddleware, upload.array('images', 7), updateProjet);
 
-// Supprimer un projet
 router.delete('/:id', authMiddleware, deleteProjet);
 
 module.exports = router;

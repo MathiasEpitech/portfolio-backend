@@ -10,12 +10,12 @@ const projetSchema = new mongoose.Schema({
     required: true
   },
   images: {
-    type: [String], // Tableau d'URLs d'images
+    type: [String],
     required: true
   },
   category: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category', // Référence au modèle Category
+    ref: 'Category',
     required: true,
   }],
   link: {

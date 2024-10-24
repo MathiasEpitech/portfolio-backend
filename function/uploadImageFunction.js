@@ -1,13 +1,11 @@
-const s3 = require('../config/awsConfig'); // Import du client S3 configuré
+const s3 = require('../config/awsConfig');
 const { PutObjectCommand } = require('@aws-sdk/client-s3');
-
-// Fonction pour uploader un fichier sur S3
 
 async function uploadToS3(file) {
     const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${Date.now()}-${file.originalname}`, // Nom unique
-        Body: file.buffer // Le buffer du fichier (grâce à multer.memoryStorage)
+        Key: `${Date.now()}-${file.originalname}`,
+        Body: file.buffer
     };
 
     try {
