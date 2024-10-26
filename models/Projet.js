@@ -18,6 +18,10 @@ const projetSchema = new mongoose.Schema({
     ref: 'Category',
     required: true,
   }],
+  technologies: {
+    type: [String],
+    required: true
+  },
   link: {
     type: String,
     required: true,

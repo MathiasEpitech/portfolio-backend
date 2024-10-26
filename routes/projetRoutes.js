@@ -6,15 +6,15 @@ const {
     deleteProjet 
 } = require('../controllers/projetController');
 const authMiddleware = require('../middleware/authMiddleware');
-
 const upload = require('../config/multerConfig');
+
 const router = express.Router();
 
 router.get('/', getProjets);
 
-router.post('/', authMiddleware, upload.array('images', 7), addProjet);
+router.post('/', authMiddleware, upload.array('images', 5), addProjet); // Jusqu'à 5 images
 
-router.put('/:id', authMiddleware, upload.array('images', 7), updateProjet);
+router.put('/:id', authMiddleware, upload.array('images', 5), updateProjet);
 
 router.delete('/:id', authMiddleware, deleteProjet);
 

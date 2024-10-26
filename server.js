@@ -20,6 +20,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connecté à MongoDB'))
   .catch((error) => console.error('Erreur de connexion à MongoDB:', error));
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projets', projetRoutes);
 app.use('/api/categories', categoryRoutes);

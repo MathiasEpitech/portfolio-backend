@@ -1,24 +1,15 @@
-const s3 = require('../config/awsConfig');
-const { PutObjectCommand } = require('@aws-sdk/client-s3');
+const cloudinary = require('../config/cloudinaryConfig');
 
-async function uploadToS3(file) {
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${Date.now()}-${file.originalname}`,
-        Body: file.buffer
-    };
-
+async function uploadToCloudinary(file) {
     try {
-        const command = new PutObjectCommand(params);
-        await s3.send(command);
-        const imageUrl = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
-        return imageUrl;
-    } catch (err) {
-        console.error("Erreur lors de l'upload à S3:", err);
-        throw err;
+        const result = await cloudinary.uploader.upload(file.path, {
+            folder: 'portfolio/projects'
+        });
+        return result.secure_url;
+    } catch (error) {
+        console.error('Erreur lors de l\'upload à Cloudinary:', error);
+        throw error;
     }
 }
 
-module.exports = {
-    uploadToS3
-};
+module.exports = { uploadToCloudinary };
